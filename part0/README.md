@@ -11,3 +11,5 @@
 is in part0/newNote.md
 
 ## Exercise 0.5
+
+is in part0/spa.md
