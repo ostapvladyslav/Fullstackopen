@@ -14,6 +14,7 @@ const App = () => {
 
   const [selected, setSelected] = useState(0);
   const [points, setPoints] = useState(new Array(anecdotes.length).fill(0));
+  const [highest, setHighest] = useState(0);
 
   const getRandomInt = (min, max) => {
     min = Math.ceil(min);
@@ -28,16 +29,22 @@ const App = () => {
   const handleClickVote = () => {
     const copy = [...points];
     copy[selected] += 1;
+    if (copy[selected] >= copy[highest]) {
+      setHighest(selected);
+    }
     setPoints(copy);
   };
 
   return (
-    <div>
+    <>
+      <h2>Anecdote of the day</h2>
       <p>{anecdotes[selected]}</p>
       <p>has {points[selected]} votes</p>
       <button onClick={handleClickVote}>vote</button>
       <button onClick={handleClickNext}>next anecdote</button>
-    </div>
+      <h2>Anecdote with most votes</h2>
+      <p>{anecdotes[highest]}</p>
+    </>
   );
 };
 
