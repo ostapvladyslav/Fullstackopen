@@ -13,21 +13,31 @@ const Header = ({ course }) => {
 
 const Content = ({ course }) => {
   return (
-    <ul>
+    <>
       {course.parts.map((part) => (
         <Part key={part.id} part={part} />
       ))}
-    </ul>
+      <Total course={course} />
+    </>
   );
 };
 
 const Part = ({ part }) => {
   return (
-    <li>
+    <p>
       {part.name} {part.exercises}
-    </li>
+    </p>
   );
 };
+
+const Total = ({ course }) => (
+  <p>
+    <b>
+      total of {course.parts.reduce((sum, part) => sum + part.exercises, 0)}{' '}
+      exercises
+    </b>
+  </p>
+);
 
 const App = () => {
   const course = {
