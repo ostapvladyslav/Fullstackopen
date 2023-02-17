@@ -13,6 +13,7 @@ const App = () => {
   ];
 
   const [selected, setSelected] = useState(0);
+  const [points, setPoints] = useState(new Array(anecdotes.length).fill(0));
 
   const getRandomInt = (min, max) => {
     min = Math.ceil(min);
@@ -20,16 +21,22 @@ const App = () => {
     return Math.floor(Math.random() * (max - min) + min); // The maximum is exclusive and the minimum is inclusive
   };
 
-  const handleClick = () => {
+  const handleClickNext = () => {
     setSelected(getRandomInt(0, anecdotes.length));
+  };
+
+  const handleClickVote = () => {
+    const copy = [...points];
+    copy[selected] += 1;
+    setPoints(copy);
   };
 
   return (
     <div>
-      {anecdotes[selected]}
-      <div>
-        <button onClick={handleClick}>next anecdote</button>
-      </div>
+      <p>{anecdotes[selected]}</p>
+      <p>has {points[selected]} votes</p>
+      <button onClick={handleClickVote}>vote</button>
+      <button onClick={handleClickNext}>next anecdote</button>
     </div>
   );
 };
