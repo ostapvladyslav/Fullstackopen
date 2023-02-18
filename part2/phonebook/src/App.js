@@ -22,15 +22,37 @@ const App = () => {
       name: newName,
       number: newNumber,
     };
+    //
 
-    if (persons.find((person) => person.name === personObject.name))
-      return alert(`${newName} is already added to phonebook`);
-
-    personService.create(personObject).then((returnedPerson) => {
-      setPersons(persons.concat(returnedPerson));
-      setNewName('');
-      setNewNumber('');
+    const personExists = persons.find((person) => {
+      return person.name === personObject.name;
     });
+
+    if (personExists) {
+      if (
+        window.confirm(
+          `${personObject.name} is already added to phonebook, replace the old number with a new one?`
+        )
+      ) {
+        personService
+          .update(personExists.id, personObject)
+          .then((returnedPerson) => {
+            setPersons(
+              persons.map((person) =>
+                person.id !== personExists.id ? person : returnedPerson
+              )
+            );
+            setNewName('');
+            setNewNumber('');
+          });
+      }
+    } else {
+      personService.create(personObject).then((returnedPerson) => {
+        setPersons(persons.concat(returnedPerson));
+        setNewName('');
+        setNewNumber('');
+      });
+    }
   };
 
   const handlePersonDelete = (person) => {
