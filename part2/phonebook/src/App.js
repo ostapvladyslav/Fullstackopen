@@ -21,15 +21,15 @@ const App = () => {
     const personObject = {
       name: newName,
       number: newNumber,
-      id: persons.length + 1,
     };
 
     if (persons.find((person) => person.name === personObject.name))
       return alert(`${newName} is already added to phonebook`);
-
-    setPersons(persons.concat(personObject));
-    setNewName('');
-    setNewNumber('');
+    axios.post('http://localhost:3001/persons', personObject).then(() => {
+      setPersons(persons.concat(personObject));
+      setNewName('');
+      setNewNumber('');
+    });
   };
 
   const handleNameChange = (event) => setNewName(event.target.value);
