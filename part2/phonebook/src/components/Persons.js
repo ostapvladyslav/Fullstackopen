@@ -1,9 +1,18 @@
 import PersonDetails from './PersonDetails';
-const Persons = ({ personsToShow }) => {
+const Persons = ({ personsToShow, handlePersonDelete }) => {
   return (
     <>
       {personsToShow.map((person) => (
-        <PersonDetails key={person.name} person={person} />
+        <div key={person.name}>
+          <PersonDetails person={person} handlePersonDelete />
+          <button
+            onClick={() => {
+              handlePersonDelete(person);
+            }}
+          >
+            delete
+          </button>
+        </div>
       ))}
     </>
   );
