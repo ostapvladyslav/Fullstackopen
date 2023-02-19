@@ -10,7 +10,10 @@ const App = () => {
   const [newName, setNewName] = useState('');
   const [newNumber, setNewNumber] = useState('');
   const [filter, setFilter] = useState('');
-  const [notificationMessage, setNotificationMessage] = useState(null);
+  const [notification, setNotification] = useState({
+    message: '',
+    style: '',
+  });
 
   useEffect(() => {
     personService.getAll().then((initialPersons) => {
@@ -43,21 +46,37 @@ const App = () => {
                 person.id !== personExists.id ? person : returnedPerson
               )
             );
-            setNotificationMessage(
-              `Replaced ${personExists.name} number with a new one`
-            );
+            setNotification({
+              message: `Replaced ${personExists.name} number with a new one`,
+              style: 'success',
+            });
             setTimeout(() => {
-              setNotificationMessage(null);
+              setNotification(null);
             }, 5000);
             setNewName('');
             setNewNumber('');
+          })
+          .catch((error) => {
+            setNotification({
+              message: `Information of ${personExists.name} was already been deleted from server`,
+              style: 'error',
+            });
+            setTimeout(() => {
+              setNotification(null);
+            }, 5000);
+            setNewName('');
+            setNewNumber('');
+            setPersons(persons.filter((n) => n.id !== personExists.id));
           });
       }
     } else {
       personService.create(personObject).then((returnedPerson) => {
-        setNotificationMessage(`Added ${returnedPerson.name}`);
+        setNotification({
+          message: `Added ${returnedPerson.name}`,
+          style: 'success',
+        });
         setTimeout(() => {
-          setNotificationMessage(null);
+          setNotification(null);
         }, 5000);
         setPersons(persons.concat(returnedPerson));
         setNewName('');
@@ -85,7 +104,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message={notificationMessage} />
+      <Notification notification={notification} />
       <Filter filter={filter} handleFilterChange={handleFilterChange} />
 
       <h3>Add a new</h3>
