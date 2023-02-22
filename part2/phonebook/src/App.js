@@ -16,9 +16,20 @@ const App = () => {
   });
 
   useEffect(() => {
-    personService.getAll().then((initialPersons) => {
-      setPersons(initialPersons);
-    });
+    personService
+      .getAll()
+      .then((initialPersons) => {
+        setPersons(initialPersons);
+      })
+      .catch((error) => {
+        setNotification({
+          message: error.response.data.error,
+          style: 'error',
+        });
+        setTimeout(() => {
+          setNotification(null);
+        }, 5000);
+      });
   }, []);
 
   const addPerson = (event) => {
@@ -33,11 +44,8 @@ const App = () => {
     });
 
     if (personExists) {
-      if (
-        window.confirm(
-          `${personObject.name} is already added to phonebook, replace the old number with a new one?`
-        )
-      ) {
+      const ok = `${personObject.name} is already added to phonebook, replace the old number with a new one?`;
+      if (window.confirm(ok)) {
         personService
           .update(personExists.id, personObject)
           .then((returnedPerson) => {
@@ -57,8 +65,12 @@ const App = () => {
             setNewNumber('');
           })
           .catch((error) => {
+            const message = error.response.data.error
+              ? error.response.data.error
+              : `Information of ${personExists.name} was already been deleted from server`;
+
             setNotification({
-              message: `Information of ${personExists.name} was already been deleted from server`,
+              message: message,
               style: 'error',
             });
             setTimeout(() => {
@@ -70,18 +82,29 @@ const App = () => {
           });
       }
     } else {
-      personService.create(personObject).then((returnedPerson) => {
-        setNotification({
-          message: `Added ${returnedPerson.name}`,
-          style: 'success',
+      personService
+        .create(personObject)
+        .then((createdPerson) => {
+          setNotification({
+            message: `Added ${createdPerson.name}`,
+            style: 'success',
+          });
+          setTimeout(() => {
+            setNotification(null);
+          }, 5000);
+          setPersons(persons.concat(createdPerson));
+          setNewName('');
+          setNewNumber('');
+        })
+        .catch((error) => {
+          setNotification({
+            message: error.response.data.error,
+            style: 'error',
+          });
+          setTimeout(() => {
+            setNotification(null);
+          }, 5000);
         });
-        setTimeout(() => {
-          setNotification(null);
-        }, 5000);
-        setPersons(persons.concat(returnedPerson));
-        setNewName('');
-        setNewNumber('');
-      });
     }
   };
 
